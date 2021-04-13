@@ -3,6 +3,7 @@
 from soup import initiate_webdriver, get_soup
 from utils import remove_first_word_in_string, remove_last_word_in_string
 from pathlib import Path
+import re
 
 BASE_URL = 'https://www.idi.ntnu.no/education/masteroppgaver.php?s=2'
 
@@ -36,6 +37,7 @@ def get_ids_and_labels_for_specializations(soup):
 
 
 def get_thesis_title(thesis):
+    # TODO: MAKE GENERIC!
     title = thesis.find("h3").text
     # TODO: Make decision: Remove marking or not? (e.g. [NorwAi])
     if title[0] == "[":
@@ -45,8 +47,30 @@ def get_thesis_title(thesis):
 
 
 def get_thesis_description(thesis):
-    # TODO: Get the full description (this is only the first part)
-    desc = thesis.find("p").text
+    """
+    The description exists in two parts: one that is shown and one
+    that is hidden (must be expanded to see). The structure of the second
+    part varies, and thus we must make the way of extraction generic.
+
+    Return:
+        The entire description of a given master thesis.
+    """
+    desc_first_part = thesis.find("p").text
+
+    desc_second_part = ""
+    # Not every thesis has a hidden description
+    try:
+        desc_second_part_raw = thesis.find_all("div")[1]
+        # Remove the "Skul besrkivelse" anchors
+        desc_second_part_raw = desc_second_part_raw.find_all()[:-2]
+        desc_second_part = [tag.text.strip()
+                            for tag in desc_second_part_raw]
+        desc_second_part = [re.sub(r"[\n]", ". ", text)
+                            for text in desc_second_part]
+    except IndexError:
+        pass
+
+    desc = desc_first_part + " " + " ".join(desc_second_part)
     return desc
 
 
@@ -61,6 +85,14 @@ def get_thesis_assigned_status(thesis):
     bottom_box = thesis.find("div", class_="status")
     assigned_status = bottom_box.find("i").text
     return assigned_status
+
+
+def get_num_students(thesis):
+    bottom_box = thesis.find("div", class_="status")
+    italic_tag = bottom_box.find_all("i")[1]
+    img_tag = italic_tag.find("img")
+    num_students = img_tag["title"]
+    return num_students
 
 
 def get_thesis_url(thesis):
@@ -85,6 +117,7 @@ def main():
             description = get_thesis_description(thesis)
             lecturer = get_thesis_lecturer(thesis)
             status = get_thesis_assigned_status(thesis)
+            num_students = get_num_students(thesis)
             url = get_thesis_url(thesis)
             # TODO: Perform save (to file or DB) -> In batches maybe?
 
@@ -94,6 +127,7 @@ def main():
                     description,
                     lecturer,
                     status,
+                    num_students,
                     url
                 ]) + "\n")
             # return
@@ -106,7 +140,3 @@ if __name__ == "__main__":
     #     file.write("")
 
     main()
-
-    # with open(Path(__file__).parent / "data.txt", "r") as file:
-    #     for line in file.readlines():
-    #         print(line.split(" | "))

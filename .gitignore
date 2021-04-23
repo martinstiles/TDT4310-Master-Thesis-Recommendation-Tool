@@ -129,3 +129,5 @@ dmypy.json
 .pyre/
 
 .vscode
+src/test2.py
+src/utils.py

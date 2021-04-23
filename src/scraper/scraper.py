@@ -4,8 +4,9 @@ from soup import initiate_webdriver, get_soup
 from utils import remove_first_word_in_string, remove_last_word_in_string
 from pathlib import Path
 import re
+import json
 
-BASE_URL = 'https://www.idi.ntnu.no/education/masteroppgaver.php?s=2'
+BASE_URL = 'https://www.idi.ntnu.no/education/fordypningsprosjekt?'
 
 
 def get_ids_and_labels_for_specializations(soup):
@@ -36,14 +37,24 @@ def get_ids_and_labels_for_specializations(soup):
     return ids_and_labels
 
 
-def get_thesis_title(thesis):
-    # TODO: MAKE GENERIC!
-    title = thesis.find("h3").text
-    # TODO: Make decision: Remove marking or not? (e.g. [NorwAi])
-    if title[0] == "[":
-        title = remove_first_word_in_string(title)
+def get_urls_and_labels_for_specializations(soup):
+    ids_and_labels = get_ids_and_labels_for_specializations(soup)
+    spec_url_and_labels = []
+    for id, label in ids_and_labels:
+        spec_url = BASE_URL + id + "=1"
+        spec_url_and_labels.append((spec_url, label))
 
-    return title
+    return spec_url_and_labels
+
+
+def get_thesis_title_and_company(thesis):
+    """ Returns title and company (company is "N/A" if there is none) """
+    title = thesis.find("h3").text
+    company = "N/A"
+    if title[0] == "[":
+        company = re.sub("[\[\]]", "", title.split(" ")[0])
+        title = remove_first_word_in_string(title)
+    return title, company
 
 
 def get_thesis_description(thesis):
@@ -102,41 +113,51 @@ def get_thesis_url(thesis):
     return url
 
 
+def get_object(thesis, specialization):
+    """ Makes the entire object to be saved to a file (and later to DB) """
+    obj = (
+        *get_thesis_title_and_company(thesis),
+        get_thesis_lecturer(thesis),
+        get_thesis_assigned_status(thesis),
+        get_num_students(thesis),
+        get_thesis_url(thesis),
+        get_thesis_description(thesis),
+        specialization
+    )
+    return obj
+
+
+def save_data(objects):
+    """ Save to file """
+    with open("src/scraper/data.txt", "w") as file:
+        data = {"data": objects}
+        json.dump(data, file)
+
+
 def main():
     driver = initiate_webdriver()
     soup = get_soup(BASE_URL, driver)
-    ids_and_labels = get_ids_and_labels_for_specializations(soup)
+    spec_url_and_labels = get_urls_and_labels_for_specializations(soup)
 
-    for id, label in ids_and_labels:
-        spec_url = BASE_URL + "&" + id + "=1"
+    all_objects = []
+    for spec_url, label in spec_url_and_labels:
+       # Get the soup for the URL of a specialization
         spec_soup = get_soup(spec_url, driver)
-        thesises = spec_soup.find_all("div", class_="oppgave")
 
-        for thesis in thesises:
-            title = get_thesis_title(thesis)
-            description = get_thesis_description(thesis)
-            lecturer = get_thesis_lecturer(thesis)
-            status = get_thesis_assigned_status(thesis)
-            num_students = get_num_students(thesis)
-            url = get_thesis_url(thesis)
-            # TODO: Perform save (to file or DB) -> In batches maybe?
+        # Extract every thesis from the soup
+        theses = spec_soup.find_all("div", class_="oppgave")
 
-            with open(Path(__file__).parent / "data.txt", "a") as file:
-                file.write(" | ".join([
-                    title,
-                    description,
-                    lecturer,
-                    status,
-                    num_students,
-                    url
-                ]) + "\n")
-            # return
-        break
+        # Get all the objects for the current specialization (label)
+        objects = [get_object(thesis, label) for thesis in theses]
+
+        # Check to see if we have the correct number of objects
+        assert len(theses) == len(
+            objects), "Not every thesis has been distracted."
+
+        all_objects += objects
+
+    save_data(all_objects)
 
 
 if __name__ == "__main__":
-    # # Clear data file:
-    # with open(Path(__file__).parent / "data.txt", "w") as file:
-    #     file.write("")
-
     main()

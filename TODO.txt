@@ -1,0 +1,8 @@
+Husk å replace æ, ø, å, no-break-space, tabs, newline
+    * \u00a0 -> space
+    * \u00e6 -> æ
+    * \u00f8 -> ø
+    * \u00e5 -> å
+    * \t -> ingenting?
+    * \n -> ingenting?
+    

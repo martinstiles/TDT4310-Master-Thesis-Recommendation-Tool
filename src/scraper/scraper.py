@@ -129,7 +129,7 @@ def get_object(thesis, specialization):
 
 def save_data(objects):
     """ Save to file """
-    with open("src/scraper/data.txt", "w") as file:
+    with open("src/scraper/data.json", "w") as file:
         data = {"data": objects}
         json.dump(data, file)
 

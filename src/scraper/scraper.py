@@ -1,3 +1,4 @@
+# TODO: Descriptions
 """ Main file for data scraping. Will save ... (?) """
 
 from soup import initiate_webdriver, get_soup

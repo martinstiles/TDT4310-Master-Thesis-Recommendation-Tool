@@ -1,33 +1,5 @@
-from connector import *
-from dataset_parser import Parser
-
-
-def create_table(conn, create_table_sql):
-    """
-    Create a table from the create_table_sql statement
-    :param conn: Connection object
-    :param create_table_sql: a CREATE TABLE statement
-    """
-    try:
-        cursor = conn.cursor()
-        cursor.execute(create_table_sql)
-    except Error as e:
-        print(e)
-
-
-def create_viewings(conn, viewings):
-    """
-    Create a new viewing into the viewings table
-    :param conn: Connection object
-    :param viewing: a viewing to be inserted (tuple of values)
-    :return: viewing id
-    """
-    sql = ''' INSERT INTO Viewings(series_id, date, screen, views, weekday)
-              VALUES(?, ?, ?, ?, ?) '''
-    cur = conn.cursor()
-    cur.executemany(sql, viewings)
-    conn.commit()
-    return cur.lastrowid
+from utils import *
+from sql_statements import *
 
 
 if __name__ == "__main__":
@@ -38,93 +10,62 @@ if __name__ == "__main__":
     database_file_windows = r"C:\Users\magnu\TDT4310-final-project\database\thesis_database.db"
     database_file_unix = r"../../database/thesis_database.db"
 
-    # dataset_file = r".\dataset\Datasett_seertall_NRK_2018.csv"
+    # conn = create_connection("")
 
-    # Parse file and make rows
-    # p = Parser(dataset_file)
-    # p.parse_file()
+    # CHOOSE THE APPROPIATE FILE SYSTEM
 
-sql_create_supervisor_table = """ CREATE TABLE IF NOT EXISTS Supervisor(
-                                        supervisor_id INTEGER PRIMARY KEY,
-                                        supervisor_name TEXT(100) NOT NULL
-                                    ); """
+    is_windows = True
+    if is_windows:
+        conn = create_connection(database_file_windows)
+    else:
+        conn = create_connection(database_file_unix)
 
-sql_create_assigned_status_table = """ CREATE TABLE IF NOT EXISTS Assigned_status(
-                                        assigned_status INTEGER PRIMARY KEY,
-                                        assigned_status_name TEXT(100) NOT NULL
-                                    ); """
+    # Connect to database and execute queries
+    with conn:
+        # # Create Supervisor table
+        # create_table(conn, SQL_CREATE_SUPERVISOR_TABLE)
 
-sql_create_number_of_students_table = """ CREATE TABLE IF NOT EXISTS Number_of_students(
-                                        num_students INTEGER PRIMARY KEY,
-                                        num_students_name TEXT(100) NOT NULL
-                                    ); """
+        # # Create Specialization table
+        # create_table(conn, SQL_CREATE_SPECIALIZATION_TABLE)
 
-sql_create_specialization_table = """ CREATE TABLE IF NOT EXISTS Specialization(
-                                        specialization_id INTEGER PRIMARY KEY,
-                                        specialization_name TEXT(100) NOT NULL
-                                    ); """
+        # # Create Assigned_status and Number_of_students tables
+        # # as enumerators for Thesis table values
+        # create_table(conn, SQL_CREATE_ASSIGNED_STATUS_TABLE)
+        # create_table(conn, SQL_CREATE_NUMBER_OF_STUDENTS_TABLE)
 
-sql_create_thesis_table = """ CREATE TABLE IF NOT EXISTS Thesis(
-                                        thesis_id INTEGER PRIMARY KEY,
-                                        thesis_name TEXT(200) NOT NULL,
-                                        supervisor_id INTEGER NOT NULL,
-                                        assigned_status INTEGER NOT NULL,
-                                        num_students INTEGER NOT NULL,
-                                        url TEXT(100) NOT NULL,
-                                        description TEXT(10000) NOT NULL,
-                                        FOREIGN KEY (supervisor_id) 
-                                            REFERENCES Supervisor(supervisor_id) 
-                                                ON DELETE NO ACTION
-                                                ON UPDATE CASCADE,
-                                        FOREIGN KEY (assigned_status) 
-                                            REFERENCES Assigned_status(assigned_status) 
-                                                ON DELETE NO ACTION
-                                                ON UPDATE NO ACTION,
-                                        FOREIGN KEY (num_students) 
-                                            REFERENCES Number_of_students(num_students) 
-                                                ON DELETE NO ACTION
-                                                ON UPDATE NO ACTION
-                                    ); """
+        # # Create (main) Thesis table
+        # create_table(conn, SQL_CREATE_THESIS_TABLE)
 
-sql_create_thesis_specializations_table = """ CREATE TABLE IF NOT EXISTS Thesis_specializations(
-                                        thesis_id INTEGER,
-                                        specialization_id INTEGER,
-                                        PRIMARY KEY (thesis_id, specialization_id),
-                                        FOREIGN KEY (thesis_id)
-                                            REFERENCES Thesis(thesis_id)
-                                                ON DELETE CASCADE
-                                                ON UPDATE CASCADE,
-                                        FOREIGN KEY (specialization_id)
-                                            REFERENCES Specialization(specialization_id)
-                                                ON DELETE CASCADE
-                                                ON UPDATE CASCADE 
-                                    ); """
-# CHOOSE THE APPROPIATE FILE
-is_windows = True
-if is_windows:
-    conn = create_connection(database_file_windows)
-else:
-    conn = create_connection(database_file_unix)
-#conn = create_connection()
+        # # Create Thesis_specializations table for N-N mappings
+        # # of theses and related specializations
+        # create_table(conn, SQL_CREATE_THESIS_SPECIALIZATIONS_TABLE)
 
-with conn:
-    # Create Supervisor table
-    create_table(conn, sql_create_supervisor_table)
+        description = "To be creative, we need to produce something which is new, meaningful and has some sort of value. Computers are able to support humans in creative processes, but to also themselves be creative or to assess if an idea or a product is creative. A master thesis project on computational creativity can investigate any creative field matching the interests and backgrounds of the student or students (language, design, music, art, mathematics, computer programming, etc.), and concentrate on one or several aspects of computational creativity, such as the production, understanding or evaluation of creativity, or on computer systems that support human creativity. "
 
-    # Create Specialization table
-    create_table(conn, sql_create_specialization_table)
+        # Add Supervisor rows
+        # insert_record(conn, "Supervisor", (1, "Björn Gambäck"))
+        # insert_record(conn, "Assigned_status", (0, "Valgbart"))
+        # insert_record(conn, "Assigned_status", (1, "Tildelt"))
+        # insert_record(conn, "Number_of_students", (0, "En student"))
+        # insert_record(conn, "Number_of_students",
+        #               (1, "Gruppe / En eller flere studenter"))
+        # insert_record(conn, "Specialization", (0, "Programvaresystemer"))
+        # insert_record(conn, "Thesis", (2014, "Computational Creativity", 1, 0, 1,
+        #                                "https://www.idi.ntnu.no/education/oppgaveforslag.php?oid=2014", description))
+        # insert_record(conn, "Thesis_specializations", (2014, 0))
+        # select_all(conn, "Thesis")
+        # select_all(conn, "Supervisor")
+        # select_all(conn, "Assigned_status")
+        # select_all(conn, "Number_of_students")
+        # select_all(conn, "Specialization")
+        # select_all(conn, "Thesis_specializations")
 
-    # Create Assigned_status and Number_of_students tables
-    # as enumerators for Thesis table values
-    create_table(conn, sql_create_assigned_status_table)
-    create_table(conn, sql_create_number_of_students_table)
-
-    # Create (main) Thesis table
-    create_table(conn, sql_create_thesis_table)
-
-    # Create Thesis_specializations table for N-N mappings
-    # of theses and related specializations
-    create_table(conn, sql_create_thesis_specializations_table)
-
-    # # add all rows of viewings
-    # create_viewings(conn, p.rows)
+        cursor = conn.cursor()
+        cursor.execute("SELECT thesis_name, supervisor_name, assigned_status, num_students, specialization_name FROM "
+                       "Thesis NATURAL JOIN Supervisor "
+                       "NATURAL JOIN Assigned_status "
+                       "NATURAL JOIN Number_of_students "
+                       "NATURAL JOIN Thesis_specializations "
+                       "NATURAL JOIN Specialization "
+                       )
+        print_table(cursor)

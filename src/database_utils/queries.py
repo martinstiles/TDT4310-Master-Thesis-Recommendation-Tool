@@ -81,14 +81,3 @@ class Cursor():
 
     #     print_table(self.cursor)
     #     return self.cursor
-
-
-def print_table(cursor):
-    """
-    Print result as formatted table.
-    :param cursor: Cursor object containing query result
-    """
-    rows = cursor.fetchall()
-    headers = [cursor.description[i][0]
-               for i in range(len(cursor.description))]
-    print(tabulate(rows, headers=headers))

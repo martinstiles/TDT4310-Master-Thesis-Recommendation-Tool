@@ -128,6 +128,7 @@ dmypy.json
 # Pyre type checker
 .pyre/
 
+# TDT4310-final-project files
 .vscode
-src/test2.py
 src/utils.py
+thesis_database.db

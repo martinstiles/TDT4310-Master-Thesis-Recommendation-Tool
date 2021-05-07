@@ -1,9 +1,9 @@
-import './App.css';
+import './App.css'
 import {
   BrowserRouter as Router,
   Switch,
   Route,
-} from "react-router-dom";
+} from "react-router-dom"
 import Home from './components/home/home'
 import Summaries from './components/summaries/summaries'
 import Recommender from './components/recommender/recommender'

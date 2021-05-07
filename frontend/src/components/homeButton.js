@@ -1,5 +1,6 @@
 import React from 'react'
 import Button from '@material-ui/core/Button'
+import { Link } from "react-router-dom";
 
 const HomeButton = () => {
     const style = {
@@ -9,7 +10,7 @@ const HomeButton = () => {
     }
 
     return (
-        <Button style={style} variant="contained" color="primary" href="/" size="large"> HOME </Button>
+        <Button style={style} variant="contained" color="primary" href="/" size="large" component={Link} to="/"> HOME </Button>
     )
 }
 

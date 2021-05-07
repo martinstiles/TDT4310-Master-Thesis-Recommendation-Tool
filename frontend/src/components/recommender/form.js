@@ -32,7 +32,7 @@ const Form = (props) => {
             <p style={{ fontStyle: "italic" }}> We need to get some information about your preferences before we can show you recommendations </p>
             <div style={{ width: "40%" }}>
                 <div style={container}>
-                    <h3> *Interests <i>(seperated with comma)</i> </h3>
+                    <h3> Interests* <i>(seperated with comma)</i> </h3>
                     <TextField style={textFieldStyle} id="outlined-basic" placeholder="AI, NLP, music, football, ..." variant="outlined"
                         onChange={(e) => setInterests(e.target.value)}
                     />

@@ -31,7 +31,7 @@ const Recommender = () => {
                     ?
                     <Form setInterests={setIntersets} setCompanies={setCompanies} />
                     :
-                    // Perform query and show it
+                    // TODO: Perform query and show it
                     <Recommendations interests={interests} companies={companies} setInterests={setIntersets} setCompanies={setCompanies} />
             }
         </div>

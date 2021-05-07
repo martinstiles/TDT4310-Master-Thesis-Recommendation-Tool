@@ -131,3 +131,5 @@ dmypy.json
 .vscode
 src/test2.py
 src/utils.py
+bin/
+pyvenv.cfg

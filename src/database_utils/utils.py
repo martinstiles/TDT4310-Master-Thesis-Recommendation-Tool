@@ -1,10 +1,11 @@
 from tabulate import tabulate
-from connector import *
+import connector
 
 
 def create_table(conn, create_table_sql):
     """
-    Create a table from the create_table_sql statement
+    Creates a table from the create_table_sql statement
+
     :param conn: Connection object
     :param create_table_sql: a CREATE TABLE statement
     """
@@ -15,25 +16,10 @@ def create_table(conn, create_table_sql):
         print(e)
 
 
-def insert_records(conn, table, **kwargs):
-    """
-    Insert multiple new records into the given table
-    :param conn: Connection object
-    :param viewing: a viewing to be inserted (tuple of values)
-    :return: viewing id
-    """
-    pass
-    # sql = ''' INSERT INTO Viewings(series_id, date, screen, views, weekday)
-    #           VALUES(?, ?, ?, ?, ?) '''
-    # cur = conn.cursor()
-    # cur.executemany(sql, viewings)
-    # conn.commit()
-    # return cur.lastrowid
-
-
 def insert_record(conn, table, values):
     """
-    Insert a single new record into the given table
+    Inserts a single new record into the given table
+
     :param conn: Connection object
     :param table: the table to insert the record into
         (snake_case, with first letter Capitalized)
@@ -41,8 +27,7 @@ def insert_record(conn, table, values):
         in each field of the table
     :return: record id
     """
-    insert_statement = ''' INSERT INTO ''' + table + ''' VALUES('''
-    # insert_statement = ''' INSERT INTO :table VALUES('''
+    insert_statement = "INSERT INTO " + table + " VALUES("
     for value in values:
         insert_statement += "?,"
     insert_statement = insert_statement[:-1] + ")"
@@ -52,9 +37,31 @@ def insert_record(conn, table, values):
     return cur.lastrowid
 
 
+def insert_records(conn, table, values):
+    """
+    Inserts multiple new records into the given table
+
+    :param conn: Connection object
+    :param table: the table to insert the record into
+        (snake_case, with first letter Capitalized)
+    :values: the list of records to be inserted
+        in each row of the table
+    :return: record id of the last record inserted
+    """
+    insert_statement = "INSERT INTO " + table + " VALUES("
+    for value in values[0]:
+        insert_statement += "?,"
+    insert_statement = insert_statement[:-1] + ")"
+    cur = conn.cursor()
+    cur.executemany(insert_statement, iter(values))
+    conn.commit()
+    return cur.lastrowid
+
+
 def select_all(conn, table, limit=-1):
     """
-    Query all rows in the table, with option to limit number of rows.
+    Returns all rows in the table, with option to limit number of rows
+
     :param table: the table to retrieve values from
     :param limit: an optional number specifying row limit
     :return: Cursor object containing result 
@@ -67,7 +74,8 @@ def select_all(conn, table, limit=-1):
 
 def print_table(cursor):
     """
-    Print result as formatted table.
+    Prints result as formatted table
+
     :param cursor: Cursor object containing query result
     """
     rows = cursor.fetchall()

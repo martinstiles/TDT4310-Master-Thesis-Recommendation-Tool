@@ -1,24 +1,19 @@
-from utils import *
-from sql_statements import *
+from os import path
+import utils
+import sql_statements
 
 
 if __name__ == "__main__":
 
-    # ONLY FOR CREATING DATABASE, SHOULD NOT BE RUN
+    # ONLY FOR CREATING DATABASE, SHOULD NOT BE RUN NORMALLY.
 
-    database_file = ""
-    database_file_windows = r"C:\Users\magnu\TDT4310-final-project\database\thesis_database.db"
-    database_file_unix = r"../../database/thesis_database.db"
-
-    # conn = create_connection("")
-
-    # CHOOSE THE APPROPIATE FILE SYSTEM
-
-    is_windows = True
-    if is_windows:
-        conn = create_connection(database_file_windows)
+    # Choose between in-memory (runtime only) and disk-based (persistent) database
+    conn = None
+    is_on_disk = True
+    if is_on_disk:
+        conn = create_connection(r"database/thesis_database.db")
     else:
-        conn = create_connection(database_file_unix)
+        conn = create_connection()
 
     # Connect to database and execute queries
     with conn:
@@ -54,18 +49,19 @@ if __name__ == "__main__":
         #                                "https://www.idi.ntnu.no/education/oppgaveforslag.php?oid=2014", description))
         # insert_record(conn, "Thesis_specializations", (2014, 0))
         # select_all(conn, "Thesis")
-        # select_all(conn, "Supervisor")
         # select_all(conn, "Assigned_status")
         # select_all(conn, "Number_of_students")
         # select_all(conn, "Specialization")
         # select_all(conn, "Thesis_specializations")
-
-        cursor = conn.cursor()
-        cursor.execute("SELECT thesis_name, supervisor_name, assigned_status, num_students, specialization_name FROM "
-                       "Thesis NATURAL JOIN Supervisor "
-                       "NATURAL JOIN Assigned_status "
-                       "NATURAL JOIN Number_of_students "
-                       "NATURAL JOIN Thesis_specializations "
-                       "NATURAL JOIN Specialization "
-                       )
-        print_table(cursor)
+        # insert_records(conn, "Supervisor", [
+        #    (2, "Svein-Erik Brattsberg"), (3, "Norvald Ryeng")])
+        # select_all(conn, "Supervisor")
+        # cursor = conn.cursor()
+        # cursor.execute("SELECT thesis_name, supervisor_name, assigned_status, num_students, specialization_name FROM "
+        #                "Thesis NATURAL JOIN Supervisor "
+        #                "NATURAL JOIN Assigned_status "
+        #                "NATURAL JOIN Number_of_students "
+        #                "NATURAL JOIN Thesis_specializations "
+        #                "NATURAL JOIN Specialization "
+        #                )
+        # print_table(cursor)

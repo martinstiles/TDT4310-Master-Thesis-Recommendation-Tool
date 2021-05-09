@@ -1,0 +1,6 @@
+TODO:
+1. (DONE) SENTENCING (make sentences as elements of a list, should be immutable)
+2. (DONE) REMOVE UNWANTED CHARACTERS
+3. (DONE) TOKENIZATION
+4. (DONE) STOP WORD REMOVAL
+5. STEMMING

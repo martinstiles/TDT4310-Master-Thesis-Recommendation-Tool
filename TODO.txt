@@ -5,4 +5,6 @@ Husk å replace æ, ø, å, no-break-space, tabs, newline
     * \u00e5 -> å
     * \t -> ingenting?
     * \n -> ingenting?
-    
+    * \xa0 -> ?
+
+Printe statistikk over datasettet vi har!

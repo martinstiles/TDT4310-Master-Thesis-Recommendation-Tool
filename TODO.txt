@@ -5,4 +5,15 @@ Husk å replace æ, ø, å, no-break-space, tabs, newline
     * \u00e5 -> å
     * \t -> ingenting?
     * \n -> ingenting?
-    
+    * \xa0 -> ?
+
+Printe statistikk over datasettet vi har!
+
+
+"""
+For summarizer: use sentences
+For key words: don't use sentences (or maybe use sentences)
+For recommendations: don't use sentences
+--> Data cleaning will save data as sentences, but if not needed just
+    flatten the array to 2D.
+"""

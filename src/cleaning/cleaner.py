@@ -68,8 +68,10 @@ def get_cleaned_descriptions(objects):
 
 
 def get_language_tags(objects):
-    language_tags = [get_language_tag(obj)
-                     for obj in objects]
+    language_tags = []
+    for i in range(len(objects)):
+        language_tags.append(get_language_tag(objects[i]))
+        print(i)
 
     return language_tags
 
@@ -113,7 +115,6 @@ def main():
         data_size, thesis_ids, cleaned_titles, cleaned_descriptions, language_tags)
 
     save_cleaned_data(cleaned_data)
-    
 
 
 if __name__ == "__main__":

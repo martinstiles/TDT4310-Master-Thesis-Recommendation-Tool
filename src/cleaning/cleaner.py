@@ -34,6 +34,7 @@ def get_thesis_ids(objects):
 def get_cleaned_titles(objects):
     """ Extract titles and perform cleaning """
     titles = get_titles(objects)
+    titles = [remove_square_brackets(title) for title in titles]
     titles = [word_tokenize(title) for title in titles]
     titles = [remove_non_letter_tokens(title) for title in titles]
     titles = [make_lowercase(title) for title in titles]
@@ -93,8 +94,7 @@ def format_data(data_size, thesis_ids, cleaned_titles, cleaned_descriptions, lan
 
 def main():
     # Load objects and perform cleaning
-    objects = load_data()
-
+    objects = load_data()[8:9]
     thesis_ids = get_thesis_ids(objects)
     cleaned_titles = get_cleaned_titles(objects)
     cleaned_descriptions = get_cleaned_descriptions(objects)
@@ -109,7 +109,9 @@ def main():
     cleaned_data = format_data(
         data_size, thesis_ids, cleaned_titles, cleaned_descriptions, language_tags)
 
-    save_cleaned_data(cleaned_data)
+    print(cleaned_data)
+    # save_cleaned_data(cleaned_data)
+    
 
 
 if __name__ == "__main__":

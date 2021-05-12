@@ -71,8 +71,7 @@ def get_language_tags(objects):
     language_tags = []
     for i in range(len(objects)):
         language_tags.append(get_language_tag(objects[i]))
-        print(i)
-
+        print(i)  # Counter to see progress during langauge detection phase
     return language_tags
 
 
@@ -98,11 +97,8 @@ def main():
     # Load objects and perform cleaning
     objects = load_data()
     thesis_ids = get_thesis_ids(objects)
-    print("THESIS IDS DONE")
     cleaned_titles = get_cleaned_titles(objects)
-    print("TITLES DONE")
     cleaned_descriptions = get_cleaned_descriptions(objects)
-    print("DESCIPTIONS DONE")
     language_tags = get_language_tags(objects)
 
     # Verify that we have the data for all objects

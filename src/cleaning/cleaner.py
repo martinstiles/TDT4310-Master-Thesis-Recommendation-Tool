@@ -17,7 +17,7 @@ import json
 
 
 def load_data():
-    with open("src/scraper/data.json") as file:
+    with open("src/scraping/data.json") as file:
         data = json.load(file)["data"]
     return data
 
@@ -93,7 +93,7 @@ def format_data(data_size, thesis_ids, cleaned_titles, cleaned_descriptions, lan
 
 def main():
     # Load objects and perform cleaning
-    objects = load_data()[0:9]
+    objects = load_data()
 
     thesis_ids = get_thesis_ids(objects)
     cleaned_titles = get_cleaned_titles(objects)

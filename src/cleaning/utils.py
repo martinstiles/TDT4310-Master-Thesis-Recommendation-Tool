@@ -109,7 +109,7 @@ def remove_stopwords_sentences(sentences_tokenized):
         sentences.append(remove_stopwords(sentence))
     return sentences
 
-
+counter = 1
 def get_language_tag(obj):
     """
     Returns a language tag based on the description text.
@@ -117,6 +117,10 @@ def get_language_tag(obj):
     """
     description = obj[DESCRIPTION_INDEX]
     blob = TextBlob(description)
+
     time.sleep(5)
+    print(counter, "/ 1285")
+    counter += 1
+
     return blob.detect_language()
     

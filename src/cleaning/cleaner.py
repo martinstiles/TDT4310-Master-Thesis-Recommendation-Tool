@@ -94,10 +94,13 @@ def format_data(data_size, thesis_ids, cleaned_titles, cleaned_descriptions, lan
 
 def main():
     # Load objects and perform cleaning
-    objects = load_data()[8:9]
+    objects = load_data()
     thesis_ids = get_thesis_ids(objects)
+    print("THESIS IDS DONE")
     cleaned_titles = get_cleaned_titles(objects)
+    print("TITLES DONE")
     cleaned_descriptions = get_cleaned_descriptions(objects)
+    print("DESCIPTIONS DONE")
     language_tags = get_language_tags(objects)
 
     # Verify that we have the data for all objects
@@ -109,8 +112,7 @@ def main():
     cleaned_data = format_data(
         data_size, thesis_ids, cleaned_titles, cleaned_descriptions, language_tags)
 
-    print(cleaned_data)
-    # save_cleaned_data(cleaned_data)
+    save_cleaned_data(cleaned_data)
     
 
 

@@ -1,1 +1,16 @@
 # re, json, nltk, texblob
+bs4
+matplotlib
+wikipedia
+regex
+joblib
+typing-extensions
+tokenizers
+sacremoses
+filelock
+transformers
+torch
+spacy
+spacy-alignments
+spacy-transformers
+en-core-web-trf

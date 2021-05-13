@@ -24,7 +24,7 @@ def load_data():
 
 
 def get_f_score(precision, recall):
-    if precision + recall > 0:
+    if precision + recall == 0:
         return 0
     return 2 * precision * recall / (precision + recall)
 
@@ -39,7 +39,8 @@ def main():
     eval_set_ids, eval_data = load_data()
 
     # Extract the stemmed data corresponding to the thesis_ids of the evaluation subset
-    eval_subset = {key:value for (key, value) in stemmed_data.items() if key in eval_set_ids}
+    eval_subset = {key: value for (
+        key, value) in stemmed_data.items() if key in eval_set_ids}
 
     # store the values so that we can compute average
     precision_values = []
@@ -50,28 +51,32 @@ def main():
         # relevant_ids is the positives
         query, relevant_ids, language = eval_object["query"], eval_object["relevant_ids"], eval_object["language"]
         relevant_ids = [str(thesis_id) for thesis_id in relevant_ids]
-        n = 5
+        n = 10
 
         # Get the recommendations based on the query
-        recommendations = recommender(query, language, n, eval_subset, debug=True)
+        recommendations = recommender(query, language, n, eval_subset)
 
-        # Only retrieve the ids that also is in the subset
-        selected_ids = [obj["id"] for obj in recommendations if obj["id"] in eval_set_ids]
+        # Only retrieve the ids that also is in the subset (in case we use the entire data set for tf-idf)
+        selected_ids = [obj["id"]
+                        for obj in recommendations if obj["id"] in eval_set_ids]
 
         # The true posivies: selected and relevant
-        true_positives = [thesis_id for thesis_id in selected_ids if thesis_id in relevant_ids]
+        true_positives = [
+            thesis_id for thesis_id in selected_ids if thesis_id in relevant_ids]
 
         # compute every measurment
-        precision = len(true_positives) / len(selected_ids) if len(selected_ids) > 0 else 0
+        precision = len(true_positives) / \
+            len(selected_ids) if len(selected_ids) > 0 else 0
         recall = len(true_positives) / len(relevant_ids)
         f_score = get_f_score(precision, recall)
 
-        print(selected_ids)
-        print(true_positives)
-        print("")
-        print(precision)
-        print(recall)
-        print(f_score)
+        print("QUERY:", query)
+        # print(selected_ids)
+        # print(true_positives)
+        # print("")
+        print("Precision:", precision)
+        print("Recall:   ", recall)
+        print("F-score:  ", f_score)
         print("")
 
         precision_values.append(precision)

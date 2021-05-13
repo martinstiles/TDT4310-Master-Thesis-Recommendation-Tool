@@ -3,8 +3,33 @@
     "queries": ["key words", "query number 2", "fill in here"],
     "relevance_data": [
         {
-            "query": "creativity poetry AI",
-            "relevant_ids": [2819, 3071],
+            "query": "AI computer vision deep learning transformers autonomous vehicles",
+            "relevant_ids": [2665, 3065, 2688, 2931, 2766, 3012, 3021, 2718, 2533, 2913, 3035, 2700, 2701, 3037],
+            "language": "en"
+        },
+        {
+            "query": "frontend games agile web strategy",
+            "relevant_ids": [3086, 3075, 2550, 3071, 2972, 3000, 2965, 2737, 2961, 2996, 2738, 2924],
+            "language": "en"
+        },
+        {
+            "query": "user-centered design agile development security testing software architecture",
+            "relevant_ids": [3053, 2533, 3071, 2972, 3000, 2965, 2737, 2961, 2996, 2738, 2924],
+            "language": "en"
+        },
+        {
+            "query": "algorithms gpgpu graphics low-level non-hardware",
+            "relevant_ids": [3065, 2913, 2758, 2940, 2700, 2995, 2993, 2701, 2550, 3037],
+            "language": "en"
+        },
+        {
+            "query": "music art nature history fashion",
+            "relevant_ids": [2819, 3086, 2934, 2996],
+            "language": "en"
+        },
+        {
+            "query": "database cloud big data OLAP mining",
+            "relevant_ids": [2879, 3086, 2882, 3075, 3087, 26, 3012, 2904],
             "language": "en"
         }
     ]

@@ -2,11 +2,12 @@
 from nltk.corpus import stopwords
 from nltk.tokenize import word_tokenize, sent_tokenize
 from textblob import TextBlob
+import time
 import re
 
 TITLE_INDEX = 0
-URL_INDEX = 5
-DESCRIPTION_INDEX = 6
+URL_INDEX = 4
+DESCRIPTION_INDEX = 5
 STOPWORDS_EN = set(stopwords.words('english'))
 STOPWORDS_NO = set(stopwords.words('norwegian'))
 
@@ -28,12 +29,8 @@ def get_descriptions(objects):
     return [obj[DESCRIPTION_INDEX] for obj in objects]
 
 
-def is_only_non_letters(word):
-    """ Returns True if the word only contains non-letter characters """
-    for letter in word:
-        if letter.isalpha():
-            return False
-    return True
+def remove_square_brackets(string):
+    return re.sub("[\[\]]", "", string)
 
 
 def remove_feks(desctriptions):
@@ -42,6 +39,14 @@ def remove_feks(desctriptions):
     Could possibly be more of such words.
     """
     return [re.sub(r'f.eks.', 'for eksempel', desctription) for desctription in desctriptions]
+
+
+def is_only_non_letters(word):
+    """ Returns True if the word only contains non-letter characters """
+    for letter in word:
+        if letter.isalpha():
+            return False
+    return True
 
 
 def get_sentences(descriptions):
@@ -110,4 +115,7 @@ def get_language_tag(obj):
     """
     description = obj[DESCRIPTION_INDEX]
     blob = TextBlob(description)
+
+    time.sleep(1)
+
     return blob.detect_language()

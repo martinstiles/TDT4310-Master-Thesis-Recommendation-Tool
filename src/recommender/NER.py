@@ -13,14 +13,17 @@ import json
 nlp = spacy.load("en_core_web_trf")
 
 actors = []
-with open("../scraper/data.json", 'r', encoding="utf-8") as file:
-    data = json.load(file)["data"]
+with open("src/cleaning/sentences.json", 'r', encoding="utf-8") as file:
+    objects = json.load(file)
+    # print(objects)
     # print(data[:2])
-    text = [obj[6] for obj in data]
+    theses = [[obj[0]] + obj[1] for key, obj in objects.items()]
     # This could easily be done with NLTK as well, sent_tokenizer would be more appropriate.
-    # print(text)
+    # print(theses)
 
-NER = nlp("\n".join(text[:int(len(text) / 10)]))
+joined_theses = "\n\n".join(["\n".join(thesis) for thesis in theses])
+# print(joined_theses)
+NER = nlp(joined_theses[:100])
 
 # # Manual
 # synonym = {
@@ -35,7 +38,8 @@ NER = nlp("\n".join(text[:int(len(text) / 10)]))
 #     "Chewbacca": ["Chewie", "Chewbacca", "Wookiee"],
 #     "Obi-Wan Kenobi": ["Ben", "BEN", "Obi-Wan", "Ben Kenobi"]
 # }
-# items = [x.text for x in NER.ents if x.label_ == "PERSON"]
+#items = [x.text for x in NER.ents]
+print(NER.ents)
 
 # actorObj = Counter((actors)).most_common(15)
 # NERObj = Counter(items).most_common(35)

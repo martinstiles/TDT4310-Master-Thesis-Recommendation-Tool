@@ -48,14 +48,10 @@ def get_urls_and_labels_for_specializations(soup):
     return spec_url_and_labels
 
 
-def get_thesis_title_and_company(thesis):
+def get_thesis_title(thesis):
     """ Returns title and company (company is "N/A" if there is none) """
     title = thesis.find("h3").text
-    company = "N/A"
-    if title[0] == "[":
-        company = re.sub("[\[\]]", "", title.split(" ")[0])
-        title = remove_first_word_in_string(title)
-    return title, company
+    return title
 
 
 def get_thesis_description(thesis):
@@ -117,7 +113,7 @@ def get_thesis_url(thesis):
 def get_object(thesis, specialization):
     """ Makes the entire object to be saved to a file (and later to DB) """
     obj = (
-        *get_thesis_title_and_company(thesis),
+        get_thesis_title(thesis),
         get_thesis_lecturer(thesis),
         get_thesis_assigned_status(thesis),
         get_num_students(thesis),
@@ -130,7 +126,7 @@ def get_object(thesis, specialization):
 
 def save_data(objects):
     """ Save to file """
-    with open("src/scraper/data.json", "w") as file:
+    with open("src/scraping/data.json", "w") as file:
         data = {"data": objects}
         json.dump(data, file)
 

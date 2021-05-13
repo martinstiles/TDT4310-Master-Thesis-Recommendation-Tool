@@ -14,7 +14,6 @@ def stem(token, language_tag):
 
 
 def flatten(token_list):
-    # print(token_list)
     flattened_list = []
     for sent in token_list:
         if sent:

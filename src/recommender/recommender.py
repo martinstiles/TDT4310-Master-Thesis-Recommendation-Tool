@@ -74,14 +74,14 @@ def get_thesis_object(thesis_id, raw_objects):
     return thesis_object
 
 
-def recommender(query, language_tag="en"):
+def recommender(query, language_tag="en", n=5, debug=False):
     raw_objects = load_raw_data()
 
     # stemmer
     objects = load_stemmed_data()
     theses = get_theses_in_language(objects, language_tag)
 
-    # Then we fit and vectorize the training set with TF-IDF representation
+    # Fit and vectorize the training set with TF-IDF representation
     vectorizer = TfidfVectorizer()
     english_terms = [" ".join(thesis) for thesis in theses.values()]
     english_tfs = vectorizer.fit_transform(english_terms)
@@ -90,21 +90,22 @@ def recommender(query, language_tag="en"):
 
     # Find similarities
     cosine_similarities = get_tf_idf_cosine_similarity(
-        vectorizer, english_tfs, test_query)
+        vectorizer, english_tfs, prepared_query)
     index_of_relevant_docs, similarities = get_index_and_similarity_of_relevant_docs(
         cosine_similarities)
     thesis_id_of_relevant_docs = get_thesis_id_of_relevant_docs(
         index_of_relevant_docs, theses)
 
     n_most_relevant_thesis_ids = get_n_most_relevant_thesis_ids(
-        thesis_id_of_relevant_docs, similarities)
+        thesis_id_of_relevant_docs, similarities, n)
 
     n_most_relevant_theses = [get_thesis_object(thesis_id, raw_objects) for thesis_id in n_most_relevant_thesis_ids]
 
-    for obj in n_most_relevant_theses:
-        print(obj["id"])
-        print(obj["title"])
-        print("")
+    if debug:
+        for obj in n_most_relevant_theses:
+            print(obj["id"])
+            print(obj["title"])
+            print("")
     
     return n_most_relevant_theses
 

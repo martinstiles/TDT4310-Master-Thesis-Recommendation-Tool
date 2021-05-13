@@ -1,6 +1,7 @@
 """
 Summarization algorithm:
 --> Finds the two most important sentences by using the sum the tf-idf weight of each token in a sentence
+--> Also creates a list of the most important words using the tf-idf weight
 """
 
 from sklearn.feature_extraction.text import TfidfVectorizer
@@ -67,6 +68,11 @@ def get_thesis_summary_and_key_words(thesis_id, cleaned_title, cleaned_descripti
     Creates a summary for the thesis by finding the weighted TF-IDF sum of the cleaned
     sentences and choses the heighest weighted sentences. The chosen sentences are mapped
     back to the original (raw) sentence.
+    
+    TODO: Clean this method please
+    TODO: Implement stemmer
+    TODO: Find key words from TF-IDF based on every title + description (flattened),
+          not just based on the internal sentences.
     """
     cleaned_sentences_as_strings = get_cleaned_sentences_as_strings(cleaned_title, cleaned_description)
 
@@ -123,7 +129,8 @@ def get_summaries(raw_objects, cleaned_objects):
     return summaries
 
 
-def main():
+def summarizer():
+    """ Returns a summary and the most important words for every thesis  """
     raw_objects = load_raw_data()
     cleaned_objects = load_cleaned_data()
     summaries = get_summaries(raw_objects, cleaned_objects)

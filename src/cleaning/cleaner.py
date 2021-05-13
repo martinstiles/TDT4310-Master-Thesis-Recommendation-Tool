@@ -4,7 +4,8 @@ Pipeline for data cleaning. The resulting data from this process will be on the 
     thesis_id:
         [
             cleaned_title,          # 2D array with every title as tokens
-            cleaned_description,    # 3D array with description tokens on the format:
+            # 3D array with description tokens on the format:
+            cleaned_description,
                                       descriptions[sentences[tokens[]]]
             language_tag,           # "en" or "no" to tag element with language
         ]
@@ -20,6 +21,11 @@ def load_data():
     with open("src/scraping/data.json") as file:
         data = json.load(file)["data"]
     return data
+
+
+def save_sentences(sents):
+    with open("src/cleaning/sentences.json", "w") as file:
+        json.dump(sents, file)
 
 
 def save_cleaned_data(cleaned_data):
@@ -43,7 +49,7 @@ def get_cleaned_titles(objects):
     return titles
 
 
-def get_cleaned_descriptions(objects):
+def get_description_sentences(objects):
     descriptions = get_descriptions(objects)
 
     # removing "f.eks." must be done here because it messes up get_sentences()
@@ -54,6 +60,10 @@ def get_cleaned_descriptions(objects):
     desc_sentences = [remove_space_coding(
         sentences) for sentences in desc_sentences]  # Necessary for summarizer -> The actual senteces that should be mapped to
 
+    return desc_sentences
+
+
+def get_cleaned_descriptions(desc_sentences):
     # desc_sentences_tokenized is a 3D array
     desc_sentences_tokenized = [tokenize_sentences(
         sentences) for sentences in desc_sentences]
@@ -75,14 +85,32 @@ def get_language_tags(objects):
     return language_tags
 
 
-def verify(data_size, thesis_ids, cleaned_titles, cleaned_descriptions, language_tags):
+def verify_sentences(data_size, thesis_ids, titles, desc_sentences, language_tags):
+    assert len(thesis_ids) == data_size, "Not all ids found"
+    assert len(titles) == data_size, "Not all titles found"
+    assert len(desc_sentences) == data_size, "Not all descriptions found"
+    assert len(language_tags) == data_size, "Not all language tags found"
+
+
+def verify_cleaned_data(data_size, thesis_ids, cleaned_titles, cleaned_descriptions, language_tags):
     assert len(thesis_ids) == data_size, "Not all ids found"
     assert len(cleaned_titles) == data_size, "Not all titles found"
     assert len(cleaned_descriptions) == data_size, "Not all descriptions found"
     assert len(language_tags) == data_size, "Not all language tags found"
 
 
-def format_data(data_size, thesis_ids, cleaned_titles, cleaned_descriptions, language_tags):
+def format_sentences(data_size, thesis_ids, titles, desc_sentences, language_tags):
+    formatted_data = {}
+    for i in range(data_size):
+        formatted_data[thesis_ids[i]] = [
+            titles[i],
+            desc_sentences[i],
+            language_tags[i]
+        ]
+    return formatted_data
+
+
+def format_cleaned_data(data_size, thesis_ids, cleaned_titles, cleaned_descriptions, language_tags):
     formatted_data = {}
     for i in range(data_size):
         formatted_data[thesis_ids[i]] = [
@@ -97,17 +125,27 @@ def main():
     # Load objects and perform cleaning
     objects = load_data()
     thesis_ids = get_thesis_ids(objects)
+    titles = get_titles(objects)
+    description_sentences = get_description_sentences(objects)
     cleaned_titles = get_cleaned_titles(objects)
-    cleaned_descriptions = get_cleaned_descriptions(objects)
+    cleaned_descriptions = get_cleaned_descriptions(description_sentences)
     language_tags = get_language_tags(objects)
 
     # Verify that we have the data for all objects
     data_size = len(objects)
-    verify(data_size, thesis_ids, cleaned_titles,
-           cleaned_descriptions, language_tags)
+    verify_sentences(data_size, thesis_ids, titles,
+                     description_sentences, language_tags)
+    verify_cleaned_data(data_size, thesis_ids, cleaned_titles,
+                        cleaned_descriptions, language_tags)
+
+    # Format the sentences and save them to json file
+    sentences = format_sentences(
+        data_size, thesis_ids, titles, description_sentences, language_tags)
+
+    save_sentences(sentences)
 
     # Format the cleaned data and save it to json file
-    cleaned_data = format_data(
+    cleaned_data = format_cleaned_data(
         data_size, thesis_ids, cleaned_titles, cleaned_descriptions, language_tags)
 
     save_cleaned_data(cleaned_data)

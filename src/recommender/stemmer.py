@@ -7,7 +7,7 @@ SB_EN = SnowballStemmer('english')
 SB_NO = SnowballStemmer('norwegian')
 
 
-def stem(token, language_tag):
+def stem(token, language_tag="en"):
     if language_tag == "no":
         return SB_NO.stem(token)
     return SB_EN.stem(token)

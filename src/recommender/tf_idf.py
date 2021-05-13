@@ -1,21 +1,18 @@
-import nltk
-# from sklearn.metrics import confusion_matrix
 from sklearn.feature_extraction.text import TfidfVectorizer
-from sklearn.metrics.pairwise import linear_kernel
-# from sklearn import svm
-# import csv
-# import pydantic.json
-# from nltk.tokenize import word_tokenize
-# import re
-# from sklearn.model_selection import train_test_split
-# from tabulate import tabulate
-from stemmer import get_stemmed_descriptions
+from sklearn.metrics.pairwise import cosine_similarity
+from stemmer import stem
+import nltk
 import json
-from itertools import chain
 
 
-def load_data():
-    with open("../cleaning/stemmed_data.json") as file:
+def load_stemmed_data():
+    with open("src/cleaning/stemmed_data.json") as file:
+        data = json.load(file)
+    return data
+
+
+def load_cleaned_data():
+    with open("src/cleaning/cleaned_data.json") as file:
         data = json.load(file)
     return data
 
@@ -31,58 +28,65 @@ def split_theses_on_language(objects):
     return english_theses, norwegian_theses
 
 
+def get_tf_idf_cosine_similarity(vectorizer, docs_tfidf, query):
+    query_tfidf = vectorizer.transform([query])
+    cosine_similarities = cosine_similarity(query_tfidf, docs_tfidf).flatten()
+    return cosine_similarities
+
+
+def get_index_and_similarity_of_relevant_docs(cosine_similarities):
+    index_of_relevant_docs = []
+    similarities = []
+    for i in range(cosine_similarities.shape[0]):
+        cos_sim = cosine_similarities[i]
+        if cos_sim > 0:
+            index_of_relevant_docs.append(i)
+            similarities.append(cos_sim)
+    return index_of_relevant_docs, similarities
+
+
+def get_thesis_id_of_relevant_docs(index_of_relevant_docs, english_theses):
+    thesis_id_of_relevant_docs = []
+    i = 0
+    for thesis_id in english_theses:
+        if i in index_of_relevant_docs:
+            thesis_id_of_relevant_docs.append(thesis_id)
+        i += 1
+    return thesis_id_of_relevant_docs
+        
+
+def get_n_most_relevant_thesis_ids(thesis_id_of_relevant_docs, similarities):
+    ids_and_similarities = zip(thesis_id_of_relevant_docs, similarities)
+    n_most_relevant_thesis_ids = sorted(ids_and_similarities, key=lambda x: x[1], reverse=True)[:5]
+    n_most_relevant_thesis_ids = [thesis_id for thesis_id, sim in n_most_relevant_thesis_ids]
+    return n_most_relevant_thesis_ids
+
+
 def main():
     # stemmer
-    objects = load_data()
+    objects = load_stemmed_data()
     english_theses, norwegian_theses = split_theses_on_language(objects)
 
-    # We split the dataset 50/50
-    # X_train, X_test, y_train, y_test = train_test_split(
-    #     cleaned_texts, labels, test_size=0.5, random_state=420)
-
-    # # Then we fit and vectorize the training set with TF-IDF representation
+    # Then we fit and vectorize the training set with TF-IDF representation
     vectorizer = TfidfVectorizer()
     english_terms = [" ".join(thesis) for thesis in english_theses.values()]
     english_tfs = vectorizer.fit_transform(english_terms)
-    # print(english_tfs[0:1])
-    test_query = vectorizer.transform(["nlp machine learning"])
-    # print("\ntest_query:")
-    # print(test_query)
-    cosine_similarities = linear_kernel(test_query, english_tfs).flatten()
-    print(cosine_similarities)
-    related_docs_indices = cosine_similarities.argsort()[:-5:-1]
-    print(related_docs_indices)
-    print(cosine_similarities[related_docs_indices])
-    print(english_tfs[0])
-    # print(vectorizer.get_feature_names())
 
-    # # We then train a SVM on the vectorized data
-    # svc = svm.SVC(C=1000, probability=True)
-    # svc.fit(X_train, y_train)
+    test_query = "deep learning matlab"  # "matlab Facial Recognition C++"  # "nlp music creativity"
+    test_query = " ".join([stem(token.lower()) for token in test_query.split()])
 
-    # Finally, we evaluate the performance
-    #
+    cosine_similarities = get_tf_idf_cosine_similarity(vectorizer, english_tfs, test_query)
+    index_of_relevant_docs, similarities = get_index_and_similarity_of_relevant_docs(cosine_similarities)
+    thesis_id_of_relevant_docs = get_thesis_id_of_relevant_docs(index_of_relevant_docs, english_theses)
 
-    # y_pred = svc.predict(X_test_vectorized)
+    n_most_relevant_thesis_ids = get_n_most_relevant_thesis_ids(thesis_id_of_relevant_docs, similarities)
 
-    # # We then try to predict the probability that
-    # # the test tweets were written by Trump or Musk
-    # probabilities = svc.predict_proba(X_test_vectorized)
+    n_most_relevant_theses = [(objects[thesis_id], thesis_id) for thesis_id in n_most_relevant_thesis_ids]
 
-    # print("Prediction of which account wrote each tweet")
-    # for i in range(len(probabilities[:10])):
-    #     print("\nTweet:", (X_test[i]))
-    #     print(
-    #         f"Trump: {probabilities[i][0]:.6f} | Musk: {probabilities[i][1]:.6f}")
+    for tup in n_most_relevant_theses:
+        print(tup[0])
+        print("")
 
-    # # Finally, we have the confusion matrix
-    # conf = confusion_matrix(y_test, y_pred)
-    # print("Confusion matrix:\n", conf)
-
-    # # And the Precision and Recall of the Trump tweet predictions
-    # print(f"\nPrecision: {conf[0][0] / (conf[0][0] + conf[1][0]):.6f}")
-    # print(f"Recall: {conf[0][0] / (conf[0][0] + conf[0][1]):.6f}")
-    pass
 
 
 if __name__ == "__main__":

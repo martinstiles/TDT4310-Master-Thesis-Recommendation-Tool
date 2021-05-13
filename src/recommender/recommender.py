@@ -74,11 +74,14 @@ def get_thesis_object(thesis_id, raw_objects):
     return thesis_object
 
 
-def recommender(query, language_tag="en", n=5, debug=False):
+def recommender(query, language_tag="en", n=5, eval_subset=None, debug=False):
     raw_objects = load_raw_data()
 
     # stemmer
     objects = load_stemmed_data()
+    if eval_subset:  # For evaluation
+        objects = eval_subset
+
     theses = get_theses_in_language(objects, language_tag)
 
     # Fit and vectorize the training set with TF-IDF representation

@@ -24,6 +24,8 @@ def load_data():
 
 
 def get_f_score(precision, recall):
+    if precision + recall > 0:
+        return 0
     return 2 * precision * recall / (precision + recall)
 
 
@@ -48,19 +50,19 @@ def main():
         # relevant_ids is the positives
         query, relevant_ids, language = eval_object["query"], eval_object["relevant_ids"], eval_object["language"]
         relevant_ids = [str(thesis_id) for thesis_id in relevant_ids]
-        n = 15
+        n = 5
 
         # Get the recommendations based on the query
-        recommendations = recommender(query, language, n, debug=True)
+        recommendations = recommender(query, language, n, eval_subset, debug=True)
 
-        # Only retrieve the ids
+        # Only retrieve the ids that also is in the subset
         selected_ids = [obj["id"] for obj in recommendations if obj["id"] in eval_set_ids]
 
         # The true posivies: selected and relevant
         true_positives = [thesis_id for thesis_id in selected_ids if thesis_id in relevant_ids]
 
         # compute every measurment
-        precision = len(true_positives) / len(selected_ids)
+        precision = len(true_positives) / len(selected_ids) if len(selected_ids) > 0 else 0
         recall = len(true_positives) / len(relevant_ids)
         f_score = get_f_score(precision, recall)
 

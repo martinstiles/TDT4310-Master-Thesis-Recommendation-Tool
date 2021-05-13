@@ -1,4 +1,5 @@
-# re, json, nltk, texblob
+nltk
+textblob
 bs4
 matplotlib
 wikipedia
@@ -14,3 +15,4 @@ spacy
 spacy-alignments
 spacy-transformers
 en-core-web-trf
+sklearn

@@ -13,8 +13,8 @@ CLEANED_TITLE_INDEX = 0
 CLEANED_DESCRIPTION_INDEX = 1
 
 
-def load_raw_data():
-    with open("src/cleaning/raw_data_dict.json") as file:
+def load_data_dict():
+    with open("src/cleaning/data_dict.json") as file:
         data = json.load(file)
     return data
 
@@ -131,7 +131,7 @@ def get_summaries(raw_objects, cleaned_objects):
 
 def summarizer():
     """ Returns a summary and the most important words for every thesis  """
-    raw_objects = load_raw_data()
+    raw_objects = load_data_dict()
     cleaned_objects = load_cleaned_data()
     summaries = get_summaries(raw_objects, cleaned_objects)
 

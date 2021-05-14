@@ -18,13 +18,13 @@ import json
 
 
 def load_data():
-    with open("src/scraping/data.json") as file:
+    with open("src/scraping/raw_data.json") as file:
         data = json.load(file)["data"]
     return data
 
 
 def save_cleaned_data(cleaned_data):
-    with open("src/cleaning/cleaned_data.json", "w") as file:
+    with open("src/cleaning/cleaned_raw_data.json", "w") as file:
         json.dump(cleaned_data, file)
 
 

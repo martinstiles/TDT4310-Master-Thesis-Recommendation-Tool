@@ -21,7 +21,7 @@ DESCRIPTION_INDEX = 5
 
 
 def load_data():
-    with open("src/scraping/data.json") as file:
+    with open("src/scraping/raw_data.json") as file:
         data = json.load(file)["data"]
     return data
 
@@ -42,7 +42,7 @@ def get_dictionary(thesis_ids, titles, descriptions):
 
 
 def save_dictionary(data):
-    with open("src/cleaning/raw_data_dict.json", "w") as file:
+    with open("src/cleaning/data_dict.json", "w") as file:
         json.dump(data, file)
 
 

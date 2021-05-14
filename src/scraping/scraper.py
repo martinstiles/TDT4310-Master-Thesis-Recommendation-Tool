@@ -126,7 +126,7 @@ def get_object(thesis, specialization):
 
 def save_data(objects):
     """ Save to file """
-    with open("src/scraping/data.json", "w") as file:
+    with open("src/scraping/raw_data.json", "w") as file:
         data = {"data": objects}
         json.dump(data, file)
 

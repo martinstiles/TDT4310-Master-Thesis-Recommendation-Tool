@@ -11,8 +11,8 @@ def load_stemmed_data():
     return data
 
 
-def load_raw_data():
-    with open("src/cleaning/raw_data_dict.json") as file:
+def load_data_dict():
+    with open("src/cleaning/data_dict.json") as file:
         data = json.load(file)
     return data
 
@@ -75,7 +75,7 @@ def get_thesis_object(thesis_id, raw_objects):
 
 
 def recommender(query, language_tag="en", n=5, eval_subset=None, debug=False):
-    raw_objects = load_raw_data()
+    raw_objects = load_data_dict()
 
     # stemmer
     objects = load_stemmed_data()

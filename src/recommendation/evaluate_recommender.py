@@ -16,7 +16,7 @@ import json
 
 
 def load_data():
-    with open("src/recommender/evaluation_data.json") as file:
+    with open("src/recommendation/evaluation_data.json") as file:
         data = json.load(file)
         eval_set_ids = [str(thesis_id) for thesis_id in data["thesis_ids"]]
         eval_data = data["relevance_data"]

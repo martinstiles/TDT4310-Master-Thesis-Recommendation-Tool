@@ -25,8 +25,8 @@ def get_theses_in_language(objects, language_tag):
     return theses
 
 
-def get_prepared_query(query):
-    return " ".join([stem(token.lower()) for token in query.split()])
+def get_prepared_query(query, language_tag):
+    return " ".join([stem(token.lower(), language_tag) for token in query.split()])
 
 
 def get_tf_idf_cosine_similarity(vectorizer, docs_tfidf, query):
@@ -89,7 +89,7 @@ def recommender(query, language_tag="en", n=5, eval_subset=None, debug=False):
     english_terms = [" ".join(thesis) for thesis in theses.values()]
     english_tfs = vectorizer.fit_transform(english_terms)
 
-    prepared_query = get_prepared_query(query)
+    prepared_query = get_prepared_query(query, language_tag)
 
     # Find similarities
     cosine_similarities = get_tf_idf_cosine_similarity(

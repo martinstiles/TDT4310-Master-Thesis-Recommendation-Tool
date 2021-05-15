@@ -111,11 +111,14 @@ def get_thesis_summary_and_key_words(thesis_id, cleaned_title, cleaned_descripti
     return summary, key_words
 
 
-def get_summaries(raw_objects, cleaned_objects):
+def get_summaries(raw_objects, cleaned_objects, start=0, end=10):
     """ Finds the summary for every thesis one by one """
     summaries = {}
-    c = 0
+    c = 1
     for thesis_id, obj in cleaned_objects.items():
+        if c < start:
+            c += 1
+            continue
         cleaned_title, cleaned_description = obj[CLEANED_TITLE_INDEX], obj[CLEANED_DESCRIPTION_INDEX]
 
         summary, key_words = get_thesis_summary_and_key_words(thesis_id, cleaned_title, cleaned_description, raw_objects)
@@ -123,17 +126,17 @@ def get_summaries(raw_objects, cleaned_objects):
             "summary": summary,
             "key_words": key_words
         }
-        if c > 5:
+        if c >= end:
             break
         c += 1
     return summaries
 
 
-def summarizer():
+def summarizer(start, end):
     """ Returns a summary and the most important words for every thesis  """
     raw_objects = load_data_dict()
     cleaned_objects = load_cleaned_data()
-    summaries = get_summaries(raw_objects, cleaned_objects)
+    summaries = get_summaries(raw_objects, cleaned_objects, start, end)
 
     for key, value in summaries.items():
         print(key)
@@ -144,4 +147,6 @@ def summarizer():
 
 
 if __name__ == "__main__":
-    main()
+    start = 10
+    end = 20
+    summarizer(start, end)

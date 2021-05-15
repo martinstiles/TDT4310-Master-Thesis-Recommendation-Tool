@@ -51,6 +51,9 @@ def main():
         # relevant_ids is the positives
         query, relevant_ids, language = eval_object["query"], eval_object["relevant_ids"], eval_object["language"]
         relevant_ids = [str(thesis_id) for thesis_id in relevant_ids]
+        
+        # n represents the (maximum) number of theses the recommender will recommend
+        # Can be tweaked to check the impact it has on precision and recall measurements
         n = 10
 
         # Get the recommendations based on the query
@@ -71,9 +74,6 @@ def main():
         f_score = get_f_score(precision, recall)
 
         print("QUERY:", query)
-        # print(selected_ids)
-        # print(true_positives)
-        # print("")
         print("Precision:", precision)
         print("Recall:   ", recall)
         print("F-score:  ", f_score)

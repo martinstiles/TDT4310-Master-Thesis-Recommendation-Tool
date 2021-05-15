@@ -79,21 +79,21 @@ def recommender(query, language_tag="en", n=5, eval_subset=None, debug=False):
 
     # stemmer
     objects = load_stemmed_data()
-    if eval_subset:  # For evaluation
+    if eval_subset:  # For evaluation we want to use a subset provided in the input parameters
         objects = eval_subset
 
     theses = get_theses_in_language(objects, language_tag)
 
     # Fit and vectorize the training set with TF-IDF representation
     vectorizer = TfidfVectorizer()
-    english_terms = [" ".join(thesis) for thesis in theses.values()]
-    english_tfs = vectorizer.fit_transform(english_terms)
+    terms = [" ".join(thesis) for thesis in theses.values()]
+    docs_tfidf = vectorizer.fit_transform(terms)
 
     prepared_query = get_prepared_query(query, language_tag)
 
     # Find similarities
     cosine_similarities = get_tf_idf_cosine_similarity(
-        vectorizer, english_tfs, prepared_query)
+        vectorizer, docs_tfidf, prepared_query)
     index_of_relevant_docs, similarities = get_index_and_similarity_of_relevant_docs(
         cosine_similarities)
     thesis_id_of_relevant_docs = get_thesis_id_of_relevant_docs(
@@ -116,5 +116,5 @@ def recommender(query, language_tag="en", n=5, eval_subset=None, debug=False):
 if __name__ == "__main__":
     # "matlab Facial Recognition C++"  # "nlp music creativity"
     # "blockchain " # "energy efficieny" # "climate change"
-    test_query = "deep learning matlab"
-    recommender(test_query, "en")
+    test_query = "nlp analysis games chatbot"
+    recommender(test_query, language_tag="en", n=15, debug=True)

@@ -40,9 +40,11 @@ def get_index_and_similarity_of_relevant_docs(cosine_similarities):
     similarities = []
     for i in range(cosine_similarities.shape[0]):
         cos_sim = cosine_similarities[i]
-        if cos_sim > 0:
-            index_of_relevant_docs.append(i)
-            similarities.append(cos_sim)
+        index_of_relevant_docs.append(i)
+        similarities.append(cos_sim)
+        # if cos_sim > 0:
+        #     index_of_relevant_docs.append(i)
+        #     similarities.append(cos_sim)
     return index_of_relevant_docs, similarities
 
 

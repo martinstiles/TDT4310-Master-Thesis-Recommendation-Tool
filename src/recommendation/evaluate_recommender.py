@@ -54,7 +54,7 @@ def main():
         
         # n represents the (maximum) number of theses the recommender will recommend
         # Can be tweaked to check the impact it has on precision and recall measurements
-        n = 10
+        n = 15
 
         # Get the recommendations based on the query
         recommendations = recommender(query, language, n, eval_subset)
@@ -69,14 +69,14 @@ def main():
 
         # compute every measurment
         precision = len(true_positives) / \
-            len(selected_ids) if len(selected_ids) > 0 else 0
+            n if len(selected_ids) > 0 else 0
         recall = len(true_positives) / len(relevant_ids)
         f_score = get_f_score(precision, recall)
 
         print("QUERY:", query)
-        print("Precision:", precision)
-        print("Recall:   ", recall)
-        print("F-score:  ", f_score)
+        print("P = ", round(precision, 2))
+        print("R = ", round(recall, 2))
+        print("F = ", round(f_score, 2))
         print("")
 
         precision_values.append(precision)
@@ -88,9 +88,9 @@ def main():
     total_f_score = get_average(f_score_values)
 
     print("\nTOTAL:")
-    print("Precision:", total_precision)
-    print("Recall:   ", total_recall)
-    print("F-score:  ", total_f_score)
+    print("Precision:", round(total_precision, 2))
+    print("Recall:   ", round(total_recall,2))
+    print("F-score:  ", round(total_f_score, 2))
 
 
 if __name__ == "__main__":

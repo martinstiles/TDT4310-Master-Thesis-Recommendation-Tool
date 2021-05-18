@@ -63,26 +63,7 @@ def get_all_raw_sentences(thesis_id, raw_objects):
     return [thesis["title"]] + thesis["description"]
 
 
-def get_thesis_summary_and_key_words(thesis_id, cleaned_title, cleaned_description, raw_objects):
-    """
-    Creates a summary for the thesis by finding the weighted TF-IDF sum of the cleaned
-    sentences and choses the heighest weighted sentences. The chosen sentences are mapped
-    back to the original (raw) sentence.
-    
-    TODO: Clean this method please
-    TODO: Implement stemmer
-    TODO: Find key words from TF-IDF based on every title + description (flattened),
-          not just based on the internal sentences.
-    """
-    cleaned_sentences_as_strings = get_cleaned_sentences_as_strings(cleaned_title, cleaned_description)
-
-    tfidf_vectorizer = TfidfVectorizer(use_idf=True)
-    tfidf_vectors = tfidf_vectorizer.fit_transform(cleaned_sentences_as_strings)
-    num_vectors = tfidf_vectors.shape[0]
-
-    # TODO: Find key words -> seperate function
-    # df = pd.DataFrame(tfidf_vectors.toarray(), columns = tfidf_vectorizer.get_feature_names())
-    # print(df)
+def get_key_words(tfidf_vectorizer, tfidf_vectors):
     feature_names = tfidf_vectorizer.get_feature_names()
     important_words = []
     tfidf_matrix = tfidf_vectors.toarray()
@@ -94,20 +75,45 @@ def get_thesis_summary_and_key_words(thesis_id, cleaned_title, cleaned_descripti
     
     five_most_important_words = sorted(important_words, key=lambda tup: tup[1], reverse=True)[:5]
     key_words = [word for word, tfidf_value in five_most_important_words]
+    return key_words
+
+
+def get_summary(tfidf_vectors, thesis_id, raw_objects):
+    num_vectors = tfidf_vectors.shape[0]
 
     # Find all weighted sums
     weighted_sums = get_weighted_sums(tfidf_vectors, num_vectors)
 
     # Find the two largest weighted_sums -> the two most important sentences
     first_index, second_index = get_index_of_most_important_sentences(weighted_sums, num_vectors)
+
     # We want the first index to be smallest (to get sentences in chronological order)
     if first_index > second_index:
         first_index, second_index = second_index, first_index
-    # TODO: cover any edge cases? -> Both equals to zero? return N/A or just title?
     
     all_raw_sentences = get_all_raw_sentences(thesis_id, raw_objects)
 
     summary = all_raw_sentences[first_index] + " " + all_raw_sentences[second_index]
+
+
+def get_thesis_summary_and_key_words(thesis_id, cleaned_title, cleaned_description, raw_objects):
+    """
+    Summary and key word generation happens in the same function so that we don't have to
+    fit and transform the TF-IDF vectorizer multiple times.
+
+    Creates a summary for the thesis by finding the weighted TF-IDF sum of the cleaned
+    sentences and choses the heighest weighted sentences. The chosen sentences are mapped
+    back to the original (raw) sentence.
+    """
+    cleaned_sentences_as_strings = get_cleaned_sentences_as_strings(cleaned_title, cleaned_description)
+
+    tfidf_vectorizer = TfidfVectorizer(use_idf=True)
+    tfidf_vectors = tfidf_vectorizer.fit_transform(cleaned_sentences_as_strings)
+
+    # Generate the key words
+    key_words = get_key_words(tfidf_vectorizer, tfidf_vectors)
+    summary = get_summary(tfidf_vectors, thesis_id, raw_objects)
+
     return summary, key_words
 
 

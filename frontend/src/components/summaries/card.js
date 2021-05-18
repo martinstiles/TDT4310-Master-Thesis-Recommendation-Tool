@@ -25,7 +25,7 @@ const CustomCard = (props) => {
                         {props.keyWords}
                     </Typography>
                 </CardContent>
-                <CardActions>
+                <CardActions style={{width: "50px"}}>
                     <Button size="small" href={props.url} target="_blank"> Go to thesis URL </Button>
                 </CardActions>
             </div>

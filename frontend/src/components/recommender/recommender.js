@@ -20,7 +20,8 @@ const Recommender = () => {
     }
 
     const [interests, setIntersets] = useState("")
-    const [companies, setCompanies] = useState("")
+    const [n, setN] = useState(10)
+    const [lang, setLang] = useState("en")
 
     return (
         <div style={containerStyle}>
@@ -29,10 +30,9 @@ const Recommender = () => {
             {
                 interests === ""
                     ?
-                    <Form setInterests={setIntersets} setCompanies={setCompanies} />
+                    <Form setInterests={setIntersets} setN={setN} setLang={setLang} />
                     :
-                    // TODO: Perform query and show it
-                    <Recommendations interests={interests} companies={companies} setInterests={setIntersets} setCompanies={setCompanies} />
+                    <Recommendations interests={interests} n={n} lang={lang} setInterests={setIntersets} />
             }
         </div>
     )

@@ -5,7 +5,7 @@ import { Link } from "react-router-dom";
 const HomeButton = () => {
     const style = {
         position: "absolute",
-        left: "2em",
+        left: "3em",
         top: "3em"
     }
 

@@ -11,7 +11,6 @@ import Recommender from './components/recommender/recommender'
 function App() {
   return (
     <Router>
-
       <div className="App">
         <Switch>
           <Route path="/summaries">

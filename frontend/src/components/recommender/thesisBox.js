@@ -25,7 +25,6 @@ const ThesisBox = ({i, title, id, mentor}) => {
                 </CardContent>
                 <CardActions style={{width: "100px", textAlign: "center"}}>
                     <a style={{textDecoration: "none"}} href={`https://www.idi.ntnu.no/education/oppgaveforslag.php?oid=${id}`} rel="noreferrer" target="_blank"> GO TO THESIS</a>
-                    
                 </CardActions>
             </div>
         </Card>

@@ -47,7 +47,7 @@ const Form = (props) => {
             <p style={{ fontStyle: "italic" }}> We need to know your intersts to show you recommendations </p>
             <div style={{ width: "40%" }}>
                 <div style={container}>
-                    <h3> Interests* (seperated with space) </h3>
+                    {/*<h3> Interests* (seperated with space) </h3>*/}
                     <TextField style={textFieldStyle} id="outlined-basic" placeholder="NLP Blockchain environment football" variant="outlined"
                         onChange={(e) => setInterests(e.target.value)}
                     />

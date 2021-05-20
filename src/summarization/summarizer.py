@@ -5,7 +5,6 @@ Summarization algorithm:
 """
 
 from sklearn.feature_extraction.text import TfidfVectorizer
-import pandas as pd
 import json
 
 
@@ -94,6 +93,8 @@ def get_summary(tfidf_vectors, thesis_id, raw_objects):
     all_raw_sentences = get_all_raw_sentences(thesis_id, raw_objects)
 
     summary = all_raw_sentences[first_index] + " " + all_raw_sentences[second_index]
+
+    return summary
 
 
 def get_thesis_summary_and_key_words(thesis_id, cleaned_title, cleaned_description, raw_objects):
